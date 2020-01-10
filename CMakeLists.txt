@@ -9,7 +9,9 @@ find_package(GLEW REQUIRED STATIC)
 find_package(Eigen3)
 include_directories(${EIGEN3_INCLUDE_DIR})
 
-add_executable(opengl_viewer main.cc gl_app.cc glsl_shader.cc coordinate_axes.cc)
+file(GLOB _SRCS ./*.cc)
+
+add_executable(opengl_viewer ${_SRCS})
 target_link_libraries(opengl_viewer
     ${OPENGL_LIBRARIES}
     ${GLEW_LIBRARY}

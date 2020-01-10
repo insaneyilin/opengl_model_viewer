@@ -22,10 +22,10 @@ class CoordinateAxes : public Drawable {
   int num_vertices_ = 0;
   int num_indices_ = 0;
 
-  GLuint vao_;
-  GLuint vbo_;
-  GLuint cbo_;
-  GLuint ebo_;
+  GLuint vao_ = 0;
+  GLuint vbo_ = 0;
+  GLuint cbo_ = 0;
+  GLuint ebo_ = 0;
 };
 
 }  // namespace ogl_viewer

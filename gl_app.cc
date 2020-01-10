@@ -42,11 +42,16 @@ bool GLApp::Init(const char* window_name, int width, int height,
   // set callbacks
   glfwSetWindowUserPointer(glfw_window_, this);  // pass user-defined pointer
   glfwSetFramebufferSizeCallback(glfw_window_, GLApp::FrameBufferSizeCallback);
+  glfwSetMouseButtonCallback(glfw_window_, GLApp::MouseButtonCallback);
+  glfwSetCursorPosCallback(glfw_window_, GLApp::CursorPosCallback);
+  glfwSetScrollCallback(glfw_window_, GLApp::ScrollCallback);
 
   if (glewInit() != 0) {
     std::cerr << "failed to init GLEW.\n";
     return false;
   }
+
+  glEnable(GL_DEPTH_TEST);
 
   // TODO: init shader with config
   shader_.reset(new GLSLShader);
@@ -55,6 +60,10 @@ bool GLApp::Init(const char* window_name, int width, int height,
 
   // coordinates axes
   coord_axes_.reset(new CoordinateAxes);
+
+  // camera control
+  camera_control_.reset(new ArcCameraControl());
+  camera_control_->SetWindowSize(width, height);
 
   return true;
 }
@@ -90,12 +99,14 @@ Eigen::Vector2i GLApp::FrameBufferSize() {
 void GLApp::Draw() {
   shader_->Use();  // don't forget to "use" our shader
 
-  // TODO: add camera control
-  Eigen::Matrix4f view_matrix = Eigen::Matrix4f::Identity();
-  Eigen::Matrix4f projection_matrix = Eigen::Matrix4f::Identity();
+  Eigen::Matrix4f view_matrix = camera_control_->GetViewMatrix();
+  Eigen::Matrix4f projection_matrix = camera_control_->GetProjectionMatrix();
 
   shader_->SetUniform("view_matrix", view_matrix);
   shader_->SetUniform("projection_matrix", projection_matrix);
+
+  shader_->SetUniform("z_clipping", 0);
+  shader_->SetUniform("z_range", Eigen::Vector2f(-100.f, 100.f));
 
   shader_->SetUniform("color_mode", 2);
   shader_->SetUniform("model_matrix",
@@ -104,17 +115,45 @@ void GLApp::Draw() {
   coord_axes_->Draw(shader_.get());
 }
 
-void GLApp::FrameBufferSizeCallback(int width, int height) {
-  // std::cout << "GLApp::FrameBufferSizeCallback.\n";
-}
-
 void GLApp::FrameBufferSizeCallback(GLFWwindow *window, int width, int height) {
   void *user_data = glfwGetWindowUserPointer(window);
   if (!user_data) {
     return;
   }
   GLApp *gl_app = static_cast<GLApp*>(user_data);
-  gl_app->FrameBufferSizeCallback(width, height);
+  gl_app->camera_control_->SetWindowSize(width, height);
+}
+
+void GLApp::MouseButtonCallback(GLFWwindow* window, int button,
+    int action, int mods) {
+  void *user_data = glfwGetWindowUserPointer(window);
+  if (!user_data) {
+    return;
+  }
+  GLApp *gl_app = static_cast<GLApp*>(user_data);
+  bool button_press_down = (action == GLFW_PRESS);
+  double x = 0.0;
+  double y = 0.0;
+  glfwGetCursorPos(window, &x, &y);
+  gl_app->camera_control_->OnMouseButton(x, y, button, button_press_down);
+}
+
+void GLApp::CursorPosCallback(GLFWwindow* window, double xpos, double ypos) {
+  void *user_data = glfwGetWindowUserPointer(window);
+  if (!user_data) {
+    return;
+  }
+  GLApp *gl_app = static_cast<GLApp*>(user_data);
+  gl_app->camera_control_->OnMouseMove(xpos, ypos);
+}
+
+void GLApp::ScrollCallback(GLFWwindow* window, double xoffset, double yoffset) {
+  void *user_data = glfwGetWindowUserPointer(window);
+  if (!user_data) {
+    return;
+  }
+  GLApp *gl_app = static_cast<GLApp*>(user_data);
+  gl_app->camera_control_->OnMouseScroll(xoffset, yoffset);
 }
 
 }  // namespace ogl_viewer

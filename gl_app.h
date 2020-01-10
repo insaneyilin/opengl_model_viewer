@@ -8,6 +8,7 @@
 #include <Eigen/Core>
 
 #include "drawable.h"
+#include "camera_control.h"
 
 namespace ogl_viewer {
 
@@ -28,14 +29,16 @@ class GLApp {
   virtual void Draw();
 
   static void FrameBufferSizeCallback(GLFWwindow *window, int width, int height);
-
- protected:
-  virtual void FrameBufferSizeCallback(int width, int height);
+  static void MouseButtonCallback(GLFWwindow* window, int button,
+      int action, int mods);
+  static void CursorPosCallback(GLFWwindow* window, double xpos, double ypos);
+  static void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 
  protected:
   GLFWwindow *glfw_window_ = nullptr;
   std::unique_ptr<GLSLShader> shader_;
   std::unique_ptr<Drawable> coord_axes_;
+  std::unique_ptr<CameraControl> camera_control_;
 };
 
 }  // namespace ogl_viewer
