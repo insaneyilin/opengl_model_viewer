@@ -27,8 +27,14 @@ bool GLApp::Init(const char* window_name, int width, int height,
     std::cerr << "failed to initialize GLFW.\n";
     return false;
   }
+
+  // OpenGL 3.3
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+  // to make MacOS happy
+  glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+  // we don't want the old OpenGL
+  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
   glfw_window_ = glfwCreateWindow(width, height, window_name,
       nullptr, nullptr);
