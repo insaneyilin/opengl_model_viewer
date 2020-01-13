@@ -30,15 +30,16 @@ CoordinateAxes::CoordinateAxes() {
 
   // use a cuboid(a set of triangles) to represent a 'line segment'
   // bind vertex buffer
-  std::vector<Eigen::Vector3f, Eigen::aligned_allocator<Eigen::Vector3f>> vertices_ext(
-      vertices_.size() * 4);
+  std::vector<Eigen::Vector3f,
+      Eigen::aligned_allocator<Eigen::Vector3f>> vertices_ext(
+          vertices_.size() * 4);
   const float line_width = 0.01f;
   for (std::size_t i = 0; i < vertices_.size(); i += 2) {
     Eigen::Vector3f line_direction = vertices_[i + 1] - vertices_[i];
     // construct local axes
     Eigen::Vector3f axis =
-        std::abs(line_direction.normalized().dot(Eigen::Vector3f::UnitZ())) < 0.9f ?
-            Eigen::Vector3f::UnitZ() : Eigen::Vector3f::UnitX();
+        std::abs(line_direction.normalized().dot(Eigen::Vector3f::UnitZ())) <
+            0.9f ? Eigen::Vector3f::UnitZ() : Eigen::Vector3f::UnitX();
     Eigen::Vector3f local_x = axis.cross(line_direction).normalized();
     Eigen::Vector3f local_y = local_x.cross(line_direction).normalized();
 
@@ -59,8 +60,8 @@ CoordinateAxes::CoordinateAxes() {
       vertices_ext.data(), GL_STATIC_DRAW);
 
   // bind color buffer
-  std::vector<Eigen::Vector4f, Eigen::aligned_allocator<Eigen::Vector4f>> colors_ext(
-      colors_.size() * 4);
+  std::vector<Eigen::Vector4f,
+      Eigen::aligned_allocator<Eigen::Vector4f>> colors_ext(colors_.size() * 4);
   for (std::size_t i = 0; i < colors_.size(); i += 2) {
     for (int j = 0; j < 4; ++j) {
       colors_ext[i * 4 + j * 2] = colors_[i];

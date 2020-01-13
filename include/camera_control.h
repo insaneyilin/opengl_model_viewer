@@ -16,7 +16,8 @@ class CameraControl {
     window_height_ = height;
   }
 
-  virtual void OnMouseButton(double x, double y, int button, bool press_down) = 0;
+  virtual void OnMouseButton(double x, double y,
+      int button, bool press_down) = 0;
   virtual void OnMouseMove(double x, double y) = 0;
   virtual void OnMouseScroll(double xoffset, double yoffset) = 0;
 
@@ -40,7 +41,8 @@ class ArcCameraControl : public CameraControl {
   ArcCameraControl();
   ~ArcCameraControl() override;
 
-  void OnMouseButton(double x, double y, int button, bool press_down) override;
+  void OnMouseButton(double x, double y,
+      int button, bool press_down) override;
   void OnMouseMove(double x, double y) override;
   void OnMouseScroll(double xoffset, double yoffset) override;
 

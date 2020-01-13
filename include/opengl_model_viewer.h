@@ -12,12 +12,13 @@
 
 namespace ogl_viewer {
 
-class GLApp {
+class OpenGLModelViewer {
  public:
-  GLApp();
-  virtual ~GLApp();
+  OpenGLModelViewer();
+  virtual ~OpenGLModelViewer();
 
   virtual bool Init(const char* window_name, int width, int height,
+      const std::string &model_file_path,
       const char* glsl_version = "#version 330");
 
   void Run();
@@ -39,6 +40,7 @@ class GLApp {
   std::unique_ptr<GLSLShader> shader_;
   std::unique_ptr<Drawable> coord_axes_;
   std::unique_ptr<CameraControl> camera_control_;
+  std::unique_ptr<Drawable> point_cloud_;
 };
 
 }  // namespace ogl_viewer

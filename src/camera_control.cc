@@ -16,15 +16,17 @@ Eigen::Matrix4f CameraControl::GetProjectionMatrix() const {
   proj_mat(2, 3) = -1.f;
   proj_mat(3, 2) = -(2.f * z_far_ * z_near_) / (z_far_ - z_near_);
 
+  // glm's matrix is in column-major, so here we need to
+  // return transposed matrix
   return proj_mat.transpose();
 }
 
 ArcCameraControl::ArcCameraControl() {
   center_ = Eigen::Vector3d::Zero();
-  distance_ = 10.0;
+  distance_ = 30.0;
   last_cursor_pos_ = Eigen::Vector2d::Zero();
-  theta_ = 0.0;
-  phi_ = -60.0 * M_PI / 180.0;
+  theta_ = -45.0 * M_PI / 180.0;
+  phi_ = theta_;
 
   CameraControl::left_button_down_ = false;
   CameraControl::right_button_down_ = false;
@@ -34,7 +36,8 @@ ArcCameraControl::ArcCameraControl() {
 ArcCameraControl::~ArcCameraControl() {
 }
 
-void ArcCameraControl::OnMouseButton(double x, double y, int button, bool press_down) {
+void ArcCameraControl::OnMouseButton(double x, double y,
+    int button, bool press_down) {
   switch (button) {
   case 0:
     CameraControl::left_button_down_ = press_down;
@@ -65,7 +68,8 @@ void ArcCameraControl::OnMouseMove(double x, double y) {
     phi_ = std::min(M_PI_2 - 0.01, std::max(-M_PI_2 + 0.01, phi_));
   } else if (right_button_down_) {
     center_ += Eigen::AngleAxisd(theta_ + M_PI_2,
-        Eigen::Vector3d::UnitZ()) * Eigen::Vector3d(-dx, dy, 0.0) * distance_ * 0.001;
+        Eigen::Vector3d::UnitZ()) * Eigen::Vector3d(-dx, dy, 0.0) *
+        distance_ * 0.001;
   }
   last_cursor_pos_[0] = x;
   last_cursor_pos_[1] = y;
@@ -82,7 +86,8 @@ void ArcCameraControl::OnMouseScroll(double xoffset, double yoffset) {
 
 Eigen::Matrix4f ArcCameraControl::GetViewMatrix() const {
   Eigen::Quaternionf quat = Eigen::AngleAxisf(theta_,
-      Eigen::Vector3f::UnitZ()) * Eigen::AngleAxisf(phi_, Eigen::Vector3f::UnitY());
+      Eigen::Vector3f::UnitZ()) *
+      Eigen::AngleAxisf(phi_, Eigen::Vector3f::UnitY());
   Eigen::Vector3f offset = quat * Eigen::Vector3f(distance_, 0.0f, 0.0f);
   Eigen::Vector3f center = center_.cast<float>();
   Eigen::Vector3f eye = center + offset;

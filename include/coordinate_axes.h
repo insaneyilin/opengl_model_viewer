@@ -16,8 +16,10 @@ class CoordinateAxes : public Drawable {
   void Draw(GLSLShader *shader) const override;
 
  private:
-  std::vector<Eigen::Vector3f, Eigen::aligned_allocator<Eigen::Vector3f> > vertices_;
-  std::vector<Eigen::Vector4f, Eigen::aligned_allocator<Eigen::Vector4f> > colors_;
+  std::vector<Eigen::Vector3f,
+      Eigen::aligned_allocator<Eigen::Vector3f> > vertices_;
+  std::vector<Eigen::Vector4f,
+      Eigen::aligned_allocator<Eigen::Vector4f> > colors_;
 
   int num_vertices_ = 0;
   int num_indices_ = 0;
