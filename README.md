@@ -1,4 +1,4 @@
-# OpenGLModelViewer
+# OpenGL Model Viewer
 
 ## Dependencies
 
