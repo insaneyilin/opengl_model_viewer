@@ -25,6 +25,10 @@ cd output
 ./opengl_model_viewer <model_file_path>
 ```
 
+## Screenshots
+
+<img src="https://github.com/insaneyilin/opengl_model_viewer/blob/master/screenshots/example.png" width="960" />
+
 ## TODOs
 
 - [ ] support .obj, .ply formats
